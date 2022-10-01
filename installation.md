@@ -21,7 +21,7 @@
 ### To run a program as wrapping :
  - $> emcc wrapping.c -o wrapping.js -s NO_EXIT_RUNTIME=1 -s EXPORTED_RUNTIME_METHODS=ccall,cwrap
 
- ### To run a program as streaming :
+ ### To run a program as streaming, memory or malloc :
  - $> emcc streaming.c streaming_util.c -o streaming.js
  - on streaming we can specify all .c files that we needs to run the principal stream program for example streaming_util.c.
  - on streaming we don't need .js file because we call directly the .wasm file.

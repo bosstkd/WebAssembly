@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Memory</title>
+    </head>
+    <body>
+        <p>Hello WebAssembly !</p>
+        <script>
+            // we declare our memory
+            var memory =  new WebAssembly.Memory({
+                initial: 256,
+                maximum: 512
+            })    
+
+            var exports;
+            WebAssembly.instantiateStreaming(fetch("memory.wasm"), {
+                // we specify a memory object for web assembly
+                js : {
+                    mem: memory
+                }
+            })
+            .then(results => {
+                exports = results.instance.exports;
+                // we are updating the pointer here and then we can use it as a buffer on the js array
+                memory = results.instance.exports.memory;
+            });
+
+            function run_wasm() {
+                var arr = new Uint32Array(memory.buffer);
+                for (var i = 0; i < 10; i++) {
+                    arr[i] = i * 2;
+                }
+                // on accumulate we pass 0 as address because the first element start from 0 and would take all the element of the buffer
+                var sum = exports.accumulate(0, 10);
+                document.getElementById("ret").innerHTML += `${sum} <br>`;
+            }
+
+            function get_string(){
+                var ptr = exports.getString();
+                // we init the memory not by 0 this time but with the pointer because out pointer has a value
+                var bytes = new Uint8Array(memory.buffer, ptr);
+
+                var strLen = 0;
+                // for getting the string length
+                while(bytes[strLen] != 0) strLen++;
+
+
+                // slice from 0 to strLen because of the length of (Hello, world!)
+                var str = new TextDecoder("utf8").decode(bytes.slice(0, strLen));
+                console.log(str);
+                document.getElementById("a").value = str
+                // navigator.clipboard.writeText(str);
+            }
+        </script>
+        <input type="text" id="a">
+        <button onclick="run_wasm()">Trigger</button>
+        <button onclick="get_string()">Copy String</button>
+        <p id = "ret"></p>
+    </body>
+</html>
