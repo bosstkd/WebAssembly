@@ -1,9 +1,9 @@
 # First step to use web Assembly
 
 ## Installation
-> git clone https://github.com/emscripten-core/emsdk.git
-> cd emsdk
-> emsdk install latest
+- git clone https://github.com/emscripten-core/emsdk.git
+- cd emsdk
+- emsdk install latest
 
 ### After choosing the operating folder: 
 > emsdk activate latest 
